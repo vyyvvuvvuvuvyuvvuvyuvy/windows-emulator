@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Windows Emulator</title>
+    <title>Windows Emulator with VPN</title>
     <style>
         body {
             margin: 0;
@@ -79,6 +79,10 @@
             color: white;
             font-weight: bold;
         }
+        .vpn-status {
+            margin-left: 20px;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -91,8 +95,13 @@
         <div class="start-button" onclick="openWindow('game')">Block Blast</div>
         <div class="start-button" onclick="openWindow('browser')">Edge</div>
         <div class="start-button" onclick="openWindow('exe')">EXE Simulation</div>
+        <div class="vpn-status" id="vpn-status">VPN: Disconnected</div>
     </div>
+
     <script>
+        let vpnStatus = false;
+        const vpnLocations = ["United States", "Germany", "Japan", "Canada", "Brazil"];
+
         function checkPassword() {
             let password = document.getElementById('password-input').value;
             if (password === '4411') {
@@ -110,7 +119,7 @@
             title.className = 'title-bar';
             title.innerHTML = `<span>${type === 'game' ? 'Block Blast' : type === 'browser' ? 'Microsoft Edge' : 'EXE Simulator'}</span><span class='close-button' onclick='closeWindow(this)'>X</span>`;
             win.appendChild(title);
-            
+
             if (type === 'game') {
                 let board = document.createElement('div');
                 board.className = 'game-board';
@@ -130,6 +139,13 @@
                         iframe.src = 'https://' + addressBar.value;
                     }
                 });
+
+                // Add VPN logic here
+                if (vpnStatus) {
+                    const randomLocation = vpnLocations[Math.floor(Math.random() * vpnLocations.length)];
+                    addressBar.placeholder = `VPN: ${randomLocation} - Enter URL...`;
+                }
+
                 browser.appendChild(addressBar);
                 browser.appendChild(iframe);
                 win.appendChild(browser);
@@ -146,6 +162,23 @@
         function closeWindow(button) {
             button.parentElement.parentElement.remove();
         }
+
+        function toggleVPN() {
+            vpnStatus = !vpnStatus;
+            updateVPNStatus();
+        }
+
+        function updateVPNStatus() {
+            const vpnStatusText = document.getElementById("vpn-status");
+            if (vpnStatus) {
+                vpnStatusText.textContent = "VPN: Connected";
+            } else {
+                vpnStatusText.textContent = "VPN: Disconnected";
+            }
+        }
+
+        // Example of toggling VPN
+        document.getElementById("vpn-status").addEventListener('click', toggleVPN);
     </script>
 </body>
 </html>
