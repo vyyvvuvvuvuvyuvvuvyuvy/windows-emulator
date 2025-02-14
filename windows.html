@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows Emulator</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: url('windows_bg.jpg') no-repeat center center/cover;
+        }
+        .taskbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50px;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+        }
+        .start-button {
+            background: gray;
+            padding: 5px 15px;
+            cursor: pointer;
+            color: white;
+            border-radius: 5px;
+        }
+        .window {
+            position: absolute;
+            width: 500px;
+            height: 600px;
+            background: white;
+            border: 1px solid black;
+            top: 50px;
+            left: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+        }
+        .title-bar {
+            background: blue;
+            color: white;
+            padding: 5px;
+            cursor: move;
+            width: 100%;
+            text-align: center;
+            font-weight: bold;
+        }
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(10, 50px);
+            grid-template-rows: repeat(10, 50px);
+            gap: 2px;
+            background: lightgray;
+            padding: 10px;
+        }
+        .block {
+            width: 50px;
+            height: 50px;
+            background: red;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .browser {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .address-bar {
+            width: 100%;
+            padding: 5px;
+            border: 1px solid black;
+        }
+        .exe-simulation {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            font-size: 20px;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <div class="taskbar">
+        <div class="start-button" onclick="openWindow('game')">Block Blast</div>
+        <div class="start-button" onclick="openWindow('browser')">Edge</div>
+        <div class="start-button" onclick="openWindow('exe')">EXE Simulation</div>
+    </div>
+    <script>
+        function openWindow(type) {
+            let win = document.createElement('div');
+            win.className = 'window';
+            let title = document.createElement('div');
+            title.className = 'title-bar';
+            title.innerText = type === 'game' ? 'Block Blast' : type === 'browser' ? 'Microsoft Edge' : 'EXE Simulator';
+            win.appendChild(title);
+            
+            if (type === 'game') {
+                let board = document.createElement('div');
+                board.className = 'game-board';
+                win.appendChild(board);
+                initGame(board);
+            } else if (type === 'browser') {
+                let browser = document.createElement('div');
+                browser.className = 'browser';
+                let addressBar = document.createElement('input');
+                addressBar.className = 'address-bar';
+                addressBar.placeholder = 'Enter URL...';
+                let iframe = document.createElement('iframe');
+                iframe.style.width = '100%';
+                iframe.style.height = '100%';
+                addressBar.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        iframe.src = 'https://' + addressBar.value;
+                    }
+                });
+                browser.appendChild(addressBar);
+                browser.appendChild(iframe);
+                win.appendChild(browser);
+            } else if (type === 'exe') {
+                let exeSim = document.createElement('div');
+                exeSim.className = 'exe-simulation';
+                exeSim.innerText = 'Simulated EXE Running...';
+                win.appendChild(exeSim);
+            }
+            
+            document.body.appendChild(win);
+        }
+        
+        function initGame(board) {
+            let colors = ['red', 'blue', 'green', 'yellow', 'purple'];
+            let blocks = [];
+            for (let i = 0; i < 100; i++) {
+                let block = document.createElement('div');
+                block.className = 'block';
+                let color = colors[Math.floor(Math.random() * colors.length)];
+                block.style.background = color;
+                block.onclick = function() {
+                    let matchingBlocks = blocks.filter(b => b.style.background === this.style.background);
+                    if (matchingBlocks.length > 1) {
+                        matchingBlocks.forEach(b => b.style.visibility = 'hidden');
+                    }
+                };
+                blocks.push(block);
+                board.appendChild(block);
+            }
+        }
+    </script>
+</body>
+</html>
