@@ -39,6 +39,7 @@
             display: flex;
             align-items: center;
             padding: 0 10px;
+            z-index: 10; /* Ensure it's above other elements */
         }
         .start-button {
             background: gray;
@@ -46,6 +47,11 @@
             cursor: pointer;
             color: white;
             border-radius: 5px;
+            margin-right: 10px;
+        }
+        .vpn-status {
+            margin-left: 20px;
+            color: white;
         }
         .window {
             position: absolute;
@@ -78,10 +84,6 @@
             padding: 2px 8px;
             color: white;
             font-weight: bold;
-        }
-        .vpn-status {
-            margin-left: 20px;
-            color: white;
         }
     </style>
 </head>
@@ -176,6 +178,12 @@
                 vpnStatusText.textContent = "VPN: Disconnected";
             }
         }
+
+        // Example of toggling VPN
+        document.getElementById("vpn-status").addEventListener('click', toggleVPN);
+    </script>
+</body>
+</html>
 
         // Example of toggling VPN
         document.getElementById("vpn-status").addEventListener('click', toggleVPN);
