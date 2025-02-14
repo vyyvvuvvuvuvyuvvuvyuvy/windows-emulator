@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Windows Emulator with VPN</title>
+    <title>Windows Emulator</title>
     <style>
         body {
             margin: 0;
@@ -80,12 +80,12 @@
             font-weight: bold;
         }
         .vpn-selector {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: white;
-            padding: 10px;
-            border-radius: 5px;
+            margin-top: 20px;
+            color: white;
+            font-size: 18px;
+        }
+        .vpn-selector select {
+            font-size: 18px;
         }
     </style>
 </head>
@@ -101,18 +101,19 @@
         <div class="start-button" onclick="openWindow('exe')">EXE Simulation</div>
     </div>
 
-    <!-- VPN Location Selector -->
     <div class="vpn-selector" id="vpn-selector" style="display:none;">
-        <label for="vpn-location">Select VPN Location: </label>
+        <label for="vpn-location">Select VPN Location:</label>
         <select id="vpn-location">
             <option value="default">Default</option>
-            <option value="US">US</option>
+            <option value="US">United States</option>
             <option value="Germany">Germany</option>
         </select>
         <button onclick="setVpn()">Set VPN</button>
     </div>
 
     <script>
+        let selectedVpnLocation = 'default'; // Default VPN location
+
         function checkPassword() {
             let password = document.getElementById('password-input').value;
             if (password === '4411') {
@@ -125,9 +126,8 @@
         }
 
         function setVpn() {
-            const vpnLocation = document.getElementById('vpn-location').value;
-            alert('VPN Location set to: ' + vpnLocation);  // Simulate VPN location change
-            // You can replace this with an actual fetch request to your Node.js server if implemented.
+            selectedVpnLocation = document.getElementById('vpn-location').value;
+            alert('VPN Location set to: ' + selectedVpnLocation);  // Simulate VPN location change
         }
 
         function openWindow(type) {
@@ -138,12 +138,7 @@
             title.innerHTML = `<span>${type === 'game' ? 'Block Blast' : type === 'browser' ? 'Microsoft Edge' : 'EXE Simulator'}</span><span class='close-button' onclick='closeWindow(this)'>X</span>`;
             win.appendChild(title);
 
-            if (type === 'game') {
-                let board = document.createElement('div');
-                board.className = 'game-board';
-                win.appendChild(board);
-                initGame(board);
-            } else if (type === 'browser') {
+            if (type === 'browser') {
                 let browser = document.createElement('div');
                 browser.className = 'browser';
                 let addressBar = document.createElement('input');
@@ -152,21 +147,18 @@
                 let iframe = document.createElement('iframe');
                 iframe.style.width = '100%';
                 iframe.style.height = '100%';
+
                 addressBar.addEventListener('keypress', function(e) {
                     if (e.key === 'Enter') {
-                        iframe.src = 'http://localhost:3000/' + addressBar.value; // Send requests through the proxy server
+                        iframe.src = `http://localhost:3000/proxy/${addressBar.value}?vpn=${selectedVpnLocation}`;
                     }
                 });
+
                 browser.appendChild(addressBar);
                 browser.appendChild(iframe);
                 win.appendChild(browser);
-            } else if (type === 'exe') {
-                let exeSim = document.createElement('div');
-                exeSim.className = 'exe-simulation';
-                exeSim.innerText = 'Simulated EXE Running...';
-                win.appendChild(exeSim);
             }
-
+            
             document.body.appendChild(win);
         }
 
