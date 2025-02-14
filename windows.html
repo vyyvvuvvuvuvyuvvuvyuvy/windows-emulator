@@ -39,7 +39,7 @@
             display: flex;
             align-items: center;
             padding: 0 10px;
-            z-index: 10; /* Ensure it's above other elements */
+            z-index: 10;
         }
         .start-button {
             background: gray;
@@ -52,6 +52,7 @@
         .vpn-status {
             margin-left: 20px;
             color: white;
+            cursor: pointer;
         }
         .window {
             position: absolute;
@@ -97,12 +98,13 @@
         <div class="start-button" onclick="openWindow('game')">Block Blast</div>
         <div class="start-button" onclick="openWindow('browser')">Edge</div>
         <div class="start-button" onclick="openWindow('exe')">EXE Simulation</div>
-        <div class="vpn-status" id="vpn-status">VPN: Disconnected</div>
+        <div class="vpn-status" id="vpn-status" onclick="toggleVPN()">VPN: Disconnected</div>
     </div>
 
     <script>
         let vpnStatus = false;
         const vpnLocations = ["United States", "Germany", "Japan", "Canada", "Brazil"];
+        let currentVpnLocation = null;
 
         function checkPassword() {
             let password = document.getElementById('password-input').value;
@@ -133,6 +135,11 @@
                 let addressBar = document.createElement('input');
                 addressBar.className = 'address-bar';
                 addressBar.placeholder = 'Enter URL...';
+
+                if (vpnStatus) {
+                    addressBar.placeholder = `VPN: ${currentVpnLocation} - Enter URL...`;
+                }
+
                 let iframe = document.createElement('iframe');
                 iframe.style.width = '100%';
                 iframe.style.height = '100%';
@@ -141,12 +148,6 @@
                         iframe.src = 'https://' + addressBar.value;
                     }
                 });
-
-                // Add VPN logic here
-                if (vpnStatus) {
-                    const randomLocation = vpnLocations[Math.floor(Math.random() * vpnLocations.length)];
-                    addressBar.placeholder = `VPN: ${randomLocation} - Enter URL...`;
-                }
 
                 browser.appendChild(addressBar);
                 browser.appendChild(iframe);
@@ -167,23 +168,28 @@
 
         function toggleVPN() {
             vpnStatus = !vpnStatus;
+            if (vpnStatus) {
+                // Select a random VPN location
+                currentVpnLocation = vpnLocations[Math.floor(Math.random() * vpnLocations.length)];
+            } else {
+                currentVpnLocation = null;
+            }
             updateVPNStatus();
         }
 
         function updateVPNStatus() {
             const vpnStatusText = document.getElementById("vpn-status");
             if (vpnStatus) {
-                vpnStatusText.textContent = "VPN: Connected";
+                vpnStatusText.textContent = `VPN: Connected to ${currentVpnLocation}`;
             } else {
                 vpnStatusText.textContent = "VPN: Disconnected";
             }
         }
 
-        // Example of toggling VPN
-        document.getElementById("vpn-status").addEventListener('click', toggleVPN);
     </script>
 </body>
 </html>
+
 
         // Example of toggling VPN
         document.getElementById("vpn-status").addEventListener('click', toggleVPN);
